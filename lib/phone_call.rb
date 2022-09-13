@@ -52,7 +52,12 @@ class Phone_call < Contact
 				raise error_msg
 			end
 		end
+		@dial_pad.status_changed(call_status)
 		@status = contact_status
 		@call_status = call_status
+	end
+
+	def set_dial_pad dial_pad
+		@dial_pad = dial_pad
 	end
 end

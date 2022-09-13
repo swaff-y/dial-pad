@@ -8,4 +8,5 @@ RSpec.describe Entry do
 	it { is_expected.to respond_to(:create).with(2).arguments }
 	it { is_expected.to respond_to(:append).with(2).arguments }
 	it { is_expected.to respond_to(:change).with(1).arguments }
+
 end

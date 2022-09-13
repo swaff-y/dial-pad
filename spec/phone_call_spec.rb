@@ -1,6 +1,8 @@
 require "phone_call"
+require "dial_pad"
 
 RSpec.describe Phone_call do
+	let(:dial_pad) { instance_double(Dial_pad, { status_changed: "changed" } ) }
 	subject{ described_class.new "+61450493936", "+61450503662", 12346 }
 
 	it { is_expected.to have_attributes sender: "+61450493936", receiver: "+61450503662", contact_id: 12346, status: "in queue" }
@@ -14,10 +16,12 @@ RSpec.describe Phone_call do
 	it { is_expected.to respond_to :set_call_status }
 
 	it "can set the call status" do
+		subject.set_dial_pad dial_pad
 		expect(subject.set_call_status("ringing")).to eq "ringing"
 	end
 
 	it "call flow ringing -> answered -> ended" do
+		subject.set_dial_pad dial_pad
 		expect(subject.call_status).to eq "in queue"
 		subject.set_call_status "ringing"
 		expect(subject.call_status).to eq "ringing"
@@ -28,6 +32,7 @@ RSpec.describe Phone_call do
 	end
 
 	it "call flow ringing -> answered -> transfered" do
+		subject.set_dial_pad dial_pad
 		expect(subject.call_status).to eq "in queue"
 		subject.set_call_status "ringing"
 		expect(subject.call_status).to eq "ringing"
@@ -38,6 +43,7 @@ RSpec.describe Phone_call do
 	end
 
 	it "call flow ringing -> answered -> error" do
+		subject.set_dial_pad dial_pad
 		expect(subject.call_status).to eq "in queue"
 		subject.set_call_status "ringing"
 		expect(subject.call_status).to eq "ringing"
@@ -45,6 +51,7 @@ RSpec.describe Phone_call do
 	end
 
 	it "does not allow changes after a complete call" do
+		subject.set_dial_pad dial_pad
 		subject.set_call_status "ringing"
 		subject.set_call_status "answered"
 		subject.set_call_status "ended"
@@ -52,6 +59,7 @@ RSpec.describe Phone_call do
 	end
 
 	it "call flow ringing -> rejected" do
+		subject.set_dial_pad dial_pad
 		expect(subject.call_status).to eq "in queue"
 		subject.set_call_status "ringing"
 		expect(subject.call_status).to eq "ringing"
@@ -60,6 +68,7 @@ RSpec.describe Phone_call do
 	end
 
 	it "raises an error when the incorrect status is set" do
+		subject.set_dial_pad dial_pad
 		expect(subject.call_status).to eq "in queue"
 		expect{ subject.set_call_status "transfered" }.to raise_error "Incorrect next call status"
 		expect{ subject.set_call_status "ended" }.to raise_error "Incorrect next call status"

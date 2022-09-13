@@ -2,6 +2,7 @@ require "./lib/button.rb"
 require "./lib/events.rb"
 
 class Entry
+	include Events
 	attr_reader :entry, :clear_button, :clear_all_button, :display_box
 
 	def initialize(ui, main_view_box)
@@ -12,7 +13,7 @@ class Entry
 
 	def create(ui, main_view_box)
 		@thbox = ui.new_vertical_box
-		@display_box = ui.new_horizontal_box
+		@display_box = ui.new_vertical_box
 		@twobox = ui.new_vertical_box
 		@twoonebox = ui.new_horizontal_box
 		@twotwobox = ui.new_horizontal_box
@@ -25,12 +26,14 @@ class Entry
 
 		ui.control_disable(@clear_button)
 		ui.control_disable(@clear_all_button)
+	end
 
+	def set_clear_clickers(ui, entry, buttons) 
 		ui.button_on_clicked(@clear_all_button) do
-			Events.clear_all_click(ui, entry)
+			clear_all_click(ui, entry, buttons)
 		end
 		ui.button_on_clicked(@clear_button) do
-			Events.clear_click(ui, entry)
+			clear_click(ui, entry, buttons)
 		end
 	end
 
@@ -44,8 +47,10 @@ class Entry
 	end
 
 	def change(ui)
+		clear_button = make_button_hash(@clear_button, "clear")
+		clear_all_button = make_button_hash(@clear_all_button, "clear")
 		ui.entry_on_changed(@entry) do
-			Events.entry_change(ui, @entry, @clear_button, @clear_all_button)
+			entry_change(ui, @entry, [ clear_button, clear_all_button ])
 		end
 	end
 end
